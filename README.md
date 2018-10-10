@@ -5,3 +5,8 @@ Data mocking tool for DDPM
 ```bash
 yarn install
 ```
+
+## Usage example
+```bash
+node ./drought-history-gen.js (with all required parameters)
+```
