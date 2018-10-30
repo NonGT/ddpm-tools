@@ -42,7 +42,7 @@ function getRiskMapData(row, col) {
   };
 }
 
-const csv = [['tl-lat', 'tl-lng', 'br-lat', 'br-lng', 'c-lat', 'c-lng', 'value']];
+const csv = [['row', 'col', 'tl-lat', 'tl-lng', 'br-lat', 'br-lng', 'c-lat', 'c-lng', 'value']];
 
 inputData.forEach((row, i) => {
   row.forEach((col, j) => {
@@ -52,6 +52,7 @@ inputData.forEach((row, i) => {
 
     const { tl, br, c, value } = getRiskMapData(i, j);
     csv.push([
+      i, j,
       tl.lat, tl.lng,
       br.lat, br.lng,
       c.lat, c.lng,
