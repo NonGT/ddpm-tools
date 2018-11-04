@@ -2,24 +2,30 @@ const argv = require('minimist')(process.argv.slice(2));
 const moment = require('moment');
 const fs = require('fs');
 
-if (!argv.in || !argv.out) {
+if (!argv.in || !argv.lin || !argv.out) {
 	console.info(
     'Usage: node landslide-risk-table-gen',
     '--in=path/to/riskmap.json',
+    '--lin=path/to/lossmap.json',
     '--out=path/to/output/folder',
   );
 	return;
 }
 
 const inputData = require(argv.in);
+const lossInputData = require(argv.lin);
 
 function getRiskMapData(row, col) {
-  const initialLat = 21.14179252214518;
-  const maxLat = 4.99131981531108;
-  const initialLng = 96.19873159784592;
-  const maxLng = 107.36690970775354;
-  const xCells = 288;
+  const diffLat = 20.78740300044397 - 21.14179252214518;
+  const diffLng = 97.25996186601748 - 96.19873159784592;
+
+  const initialLat = 20.78740300044397;
+  const maxLat = 4.99131981531108 + diffLat;
+  const initialLng = 97.25996186601748;
+  const maxLng = 107.36690970775354 + diffLng;
+  const xCells = 285;
   const yCells = 419;
+
   const latIncrement = (maxLat - initialLat) / yCells;
   const lngIncrement = (maxLng - initialLng) / xCells;
   const riskValue = inputData[row][col];
@@ -42,7 +48,7 @@ function getRiskMapData(row, col) {
   };
 }
 
-const csv = [['row', 'col', 'tl-lat', 'tl-lng', 'br-lat', 'br-lng', 'c-lat', 'c-lng', 'value']];
+const csv = [['row', 'col', 'tl-lat', 'tl-lng', 'br-lat', 'br-lng', 'c-lat', 'c-lng', 'value', 'loss']];
 
 inputData.forEach((row, i) => {
   row.forEach((col, j) => {
@@ -50,6 +56,7 @@ inputData.forEach((row, i) => {
       return;
     }
 
+    const loss = lossInputData[i][j];
     const { tl, br, c, value } = getRiskMapData(i, j);
     csv.push([
       i, j,
@@ -57,6 +64,7 @@ inputData.forEach((row, i) => {
       br.lat, br.lng,
       c.lat, c.lng,
       value,
+      loss,
     ].join(','));
   });
 });
